@@ -5,7 +5,6 @@ from datetime import datetime
 from dacite import Config, from_dict
 from dotenv import load_dotenv
 from typing import List
-import utilz
 
 from models.requestresult import Result_Categories, Result_Bookmarks
 from models.bookmark import Bookmark
@@ -40,9 +39,8 @@ class FlameClient():
 
   def get_auth_header(self) -> object:
     return {'Content-Type':'application/json',
+              'Authorization-Flame':  'Bearer {}'.format(self.auth_token),
                'Authorization': 'Bearer {}'.format(self.auth_token)}
-    
-    #return {'Authorization': 'Bearer ' + self.auth_token}
 
   def get_categories(self) -> List[Category]:
     url = "{endpoint}categories".format(endpoint=self.endpoint)
@@ -57,9 +55,11 @@ class FlameClient():
   def create_bookmark(self, bookmark: Bookmark):
     url = "{endpoint}bookmarks".format(endpoint=self.endpoint)
     authenticator = self.get_auth_header()
-    data = json.loads(json.dumps(bookmark, default=utilz.serialize))
+    data = bookmark.toCreate()
     response = requests.post(url, json=data, headers=authenticator)
     json_val = response.json()
+
+    return json_val
 
 
 if __name__ == "__main__":
@@ -78,6 +78,6 @@ if __name__ == "__main__":
     print("{id} - {name} - {numbookmarks}".format(id=x.id, name=x.name, numbookmarks=len(x.bookmarks)))
 
 
-  bm = Bookmark(id=None, name="testing", url="https://google.ca/", category_id=2, icon="book", is_public=0, order_id=None, created_at=datetime.now(), updated_at=datetime.now())
+  bm = Bookmark(id=None, name="testing", url="https://google.ca/", category_id=2, icon="book", is_public=True, order_id=None, created_at=datetime.now(), updated_at=datetime.now())
 
-  client.create_bookmark(bm)
+  print(client.create_bookmark(bm))

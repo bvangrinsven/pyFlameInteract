@@ -8,7 +8,7 @@ class Bookmark:
     url: str
     category_id: int = 0
     icon: str = "book"
-    is_public: bool = False
+    is_public: int = 1
     order_id: str = ""
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
@@ -23,3 +23,16 @@ class Bookmark:
         self.order_id = order_id
         self.created_at = created_at
         self.updated_at = updated_at
+
+    def toCreate(self) -> object:
+        return {
+            "name": self.name,
+            "url": self.url,
+            "categoryId": self.category_id,
+            "icon": self.icon,
+            "isPublic": self.is_public,
+            "orderId": self.order_id
+        }
+
+
+
